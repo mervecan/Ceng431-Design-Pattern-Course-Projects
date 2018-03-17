@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import business.HospitalStaff;
 
+//Mediator Interface
 public interface IMonitor {
 	public Result takeAction(HospitalStaff staff, Tasks task, Patient patient) throws Exception, IOException;
 	public Result goToPatient(HospitalStaff staff, Patient patient) throws NumberFormatException, IOException;

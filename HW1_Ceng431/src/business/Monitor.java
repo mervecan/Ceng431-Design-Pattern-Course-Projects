@@ -3,19 +3,21 @@ package business;
 import java.io.IOException;
 import java.util.ArrayList;
 
+//Concrete Mediator
 public class Monitor implements IMonitor{
 	ArrayList<Patient> patientList = new ArrayList<Patient>();
 	
-	public Monitor() {
-		
-	}
+	public Monitor() {}
+	
 	
 	@Override
 	public Result takeAction(HospitalStaff staff, Tasks task, Patient patient) throws Exception, IOException  {
-
-	 if(goToPatient(staff, patient).equals(Result.SUCCESS)) {
+		Result wentToPatient = goToPatient(staff, patient); //"staff" tries to go to patient
+		
+		//if "staff" was successful to go to the patient, tries to perform the task given. 
+		if(wentToPatient.equals(Result.SUCCESS)) {
 			if(Tasks.DISMISS_PATIENT.equals(task)) {
-				((Doctor) staff).dismissPatient();
+				((Doctor) staff).dismissPatient(); //Only the doctors can dismiss a patient
 				return dismissPatient(patient.getSSN());		
 			}else {
 				patient.setCurrentProcess(task.toString());
@@ -30,6 +32,8 @@ public class Monitor implements IMonitor{
 		Result result = TaskHandler.result(Tasks.GO_TO_PATIENT);
 		if(result == Result.SUCCESS) {
 			staff.setPatient(patient);
+		} else{
+			System.out.println(staff.getName() + " can not go to the patient to perform the task right now.");
 		}
 		return result;	
 	}
@@ -42,8 +46,12 @@ public class Monitor implements IMonitor{
 		}
 		Result result = TaskHandler.result(Tasks.DISMISS_PATIENT);
 		if(result.equals(Result.SUCCESS)) {
+			System.out.println("Patient " + patient.getName() + " is dismissed successfully.");
 			patientList.remove(patient);
+		} else {
+			System.out.println("Patient " + patient.getName() + " could not be dismissed.");
 		}
+		
 		return result;
 	}
 
@@ -66,6 +74,7 @@ public class Monitor implements IMonitor{
 				return patient;
 			}
 		}
+		System.out.println("This SSN is not registered to the hospital as a patient.");
 		return null;
 	}
 

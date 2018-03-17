@@ -1,5 +1,7 @@
 package business;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+
 public class Patient {
 	private String SSN;
 	private String firstName;
@@ -7,9 +9,7 @@ public class Patient {
 	private int roomNo;
 	private String currentProcess;
 	
-	public Patient() {
-		
-	}
+	public Patient() {}
 
 	public Patient(String SSN, String firstName, String lastName, int roomNo) {
 		super();
@@ -34,6 +34,10 @@ public class Patient {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+	public String getName(){
+		return firstName + " " + lastName;
 	}
 
 	public int getRoomNo() {
@@ -60,5 +64,9 @@ public class Patient {
 		this.SSN = SSN;
 	}
 		
+	@Override
+	public String toString() {
+		return String.format("%1$-25s%2$18s", SSN, getName(), Integer.toString(roomNo), currentProcess);
+	}
 	
 }

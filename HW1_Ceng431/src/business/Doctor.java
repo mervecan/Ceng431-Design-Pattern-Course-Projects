@@ -1,7 +1,5 @@
 package business;
 
-import java.io.IOException;
-
 public class Doctor extends HospitalStaff {
 
 	
