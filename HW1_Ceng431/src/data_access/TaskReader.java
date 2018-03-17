@@ -11,7 +11,7 @@ public class TaskReader {
 	public HashMap<String, Double> readTasksProbablities() throws NumberFormatException, IOException{
 		
 	
-	String filePath = "file/test.txt";
+	String filePath = "HW1_Ceng431/file/test.txt";
     HashMap<String, Double> map = new HashMap<String, Double>();
 
     String line;
@@ -30,14 +30,7 @@ public class TaskReader {
         				}     
         			}
         		}
-        } else {
-            System.out.println("ignoring line: " + line);
-        }
-    }
-
-    for (String key : map.keySet())
-    {
-        //System.out.println(key + ":" + map.get(key));
+        } 
     }
     reader.close();
     return map;
