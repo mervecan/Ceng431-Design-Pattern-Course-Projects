@@ -1,23 +1,26 @@
-public class Part extends Component{
+import java.util.HashMap;
+import java.util.Random;
 
-	public Part(String name) {
-		super.setState(new Ordered(this));
-		setName(name);
-	}
-	
-	@Override
-	public String getName() {
-		return getCompositionStructure();
-	}
-	
-	@Override
-	public State getState() {
-		return super.getState();
-	}
-	
-	@Override
-	public boolean isReady(){
-		return getState().getClass().equals(Ready.class) && super.isReady();
-	}
-	
+public class Part extends Component {
+    boolean needPartProduction;
+    public Part(String name){
+        Random RNG = new Random();
+        setRequired(RNG.nextInt(3)+1);
+        setState(new Ordered());
+        setName(name);
+    }
+
+    @Override
+    public void produce(HashMap<String, Integer> componentsInventory, HashMap<String, Integer> partsInventory) throws InterruptedException {
+        needPartProduction = super.updateInventory(partsInventory);
+        if(!needPartProduction) {
+            State ready = new Ready();
+            setState(ready);
+            ready.waitToFinish(this, componentsInventory, partsInventory);
+        }
+    }
+
+    public boolean isNeedPartProduction() {
+        return needPartProduction;
+    }
 }

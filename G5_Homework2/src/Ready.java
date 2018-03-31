@@ -1,20 +1,14 @@
+import java.util.HashMap;
 
-public class Ready implements StateOfPart, StateOfComponent {
+public class Ready implements State {
 
-	public Ready(Component component) {
-		// TODO Auto-generated constructor stub
-	}
+    @Override
+    public void waitToFinish(Component component, HashMap<String, Integer> componentsInventory, HashMap<String, Integer> partsInventory) throws InterruptedException {
+        System.out.println(component.getClass().getName() + " " + component.toString() + " is ready.");
+    }
 
-	@Override
-	public void waitForDays(Component component) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void daysToWait(int maxDay) {
 
-	@Override
-	public void waitForDays(Part part) {
-		// TODO Auto-generated method stub
-		
-	}
-
+    }
 }
