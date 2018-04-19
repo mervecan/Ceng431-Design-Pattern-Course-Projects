@@ -1,4 +1,4 @@
-public class Song {
+public class Song implements ISong{
     String title;
     String length;
 

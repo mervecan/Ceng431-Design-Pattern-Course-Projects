@@ -1,9 +1,10 @@
 import java.util.List;
 
-public class Album {
+public class Album implements IAlbum{
     String title;
     String description;
     List<Song> songs;
+    
 
     public Album(){
 

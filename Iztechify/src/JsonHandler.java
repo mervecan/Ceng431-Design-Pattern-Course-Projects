@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO add edit function
 public class JsonHandler<T> {
     private File file;
     private ObjectMapper mapper;
@@ -27,6 +28,13 @@ public class JsonHandler<T> {
 
     public List<T> getObjectList() {
         return objectList;
+    }
+    
+    public void removeObject(T object) throws IOException{
+    	if(objectList.contains(object)) {
+    		objectList.remove(object);
+    		updateJson();
+    	}
     }
 
     public static void main(String[] args) throws IOException {
