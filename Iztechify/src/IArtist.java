@@ -1,5 +1,4 @@
-
-public interface IArtist extends ISubject{
-	 public void addAlbum(Album album);
-	 public void deleteAlbum(Album album);
+public interface IArtist extends IObserver, ISubject {
+    void addAlbum(Album album);
+    void removeAlbum(Album album);
 }

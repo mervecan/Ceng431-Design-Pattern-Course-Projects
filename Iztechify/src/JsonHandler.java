@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //TODO add edit function
-public class JsonHandler<T> {
+public class JsonHandler<T extends ISubject> {
     private File file;
     private ObjectMapper mapper;
     private List<T> objectList;
@@ -30,18 +30,21 @@ public class JsonHandler<T> {
         return objectList;
     }
     
-    public void removeObject(T object) throws IOException{
+    public boolean removeObject(T object) throws IOException{
     	if(objectList.contains(object)) {
     		objectList.remove(object);
-    		updateJson();
+    		return true;
     	}
+    	return false;
+    }
+
+    public boolean addObject(T object) throws IOException{
+        //TODO: Modify so that if object exists it modifies it.
+        objectList.add(object);
+        return true;
     }
 
     public static void main(String[] args) throws IOException {
-        JsonHandler<Artist> jsonHandler = new JsonHandler<>("music.json", Artist.class);
-        jsonHandler.readJson();
-        for(Artist artist: jsonHandler.getObjectList()){
-            System.out.println(artist.getName());
-        }
+
     }
 }

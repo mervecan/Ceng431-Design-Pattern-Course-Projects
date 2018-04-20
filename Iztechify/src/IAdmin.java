@@ -1,4 +1,3 @@
-
-public interface IAdmin {
+public interface IAdmin extends IObserver {
 
 }

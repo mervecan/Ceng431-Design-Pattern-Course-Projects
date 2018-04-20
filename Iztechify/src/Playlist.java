@@ -1,40 +1,35 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Artist implements IArtist {
-    private String name;
-    private List<Album> albums;
-    int state;
+public class Playlist implements IPlaylist {
+    private List<Song> songs;
+    private int state;
     private List<IObserver> observers;
 
-    public Artist(){
-        albums = new ArrayList<>();
-    }
-
-    public Artist(String name, List<Album> albums) {
-        this.name = name;
-        this.albums = albums;
+    public Playlist() {
+        state = 0;
+        observers = new ArrayList<>();
     }
 
     @Override
-    public void addAlbum(Album album) {
-        albums.add(album);
+    public void addSong(Song song) {
+        songs.add(song);
     }
 
     @Override
-    public void removeAlbum(Album album) {
-        if(albums.contains(album)){
-            albums.remove(album);
+    public void removeSong(Song song) {
+        if(songs.contains(song)){
+            songs.remove(song);
         }
     }
 
     @Override
     public void update(ISubject iSubject) {
-        Album subject = (Album)iSubject;
-        for(Album album: albums){
-            if(album.getTitle().equals(subject.getTitle())){
-                albums.remove(album);
-                albums.add(subject);
+        Song subject = (Song)iSubject;
+        for(Song song: songs){
+            if(song.getTitle().equals(subject.getTitle())){
+                songs.remove(song);
+                songs.add(subject);
             }
         }
     }

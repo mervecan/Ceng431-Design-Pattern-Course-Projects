@@ -1,42 +1,56 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Artist implements IArtist {
+public class User implements IUser {
     private String name;
-    private List<Album> albums;
-    int state;
+    private String password;
+    private List<Playlist> playlists;
+    private List<User> friends;
+    private int state;
     private List<IObserver> observers;
-
-    public Artist(){
-        albums = new ArrayList<>();
+    public User(){
+        friends = new ArrayList<>();
+        playlists = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
-    public Artist(String name, List<Album> albums) {
+    public User(String name, String password) {
         this.name = name;
-        this.albums = albums;
+        this.password = password;
+        friends = new ArrayList<>();
+        playlists = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
     @Override
-    public void addAlbum(Album album) {
-        albums.add(album);
+    public void createPlaylist() {
+        Playlist playlist = new Playlist();
+        playlists.add(playlist);
     }
 
     @Override
-    public void removeAlbum(Album album) {
-        if(albums.contains(album)){
-            albums.remove(album);
-        }
+    public void addSongToPlaylist(Playlist playlist, Song song) {
+        playlist.addSong(song);
+    }
+
+    @Override
+    public void removeSongFromPlaylist(Playlist playlist, Song song) {
+
+    }
+
+    @Override
+    public void addFriend(IUser friend) {
+
+    }
+
+    @Override
+    public void removeFriend(IUser friend) {
+
     }
 
     @Override
     public void update(ISubject iSubject) {
-        Album subject = (Album)iSubject;
-        for(Album album: albums){
-            if(album.getTitle().equals(subject.getTitle())){
-                albums.remove(album);
-                albums.add(subject);
-            }
-        }
+
     }
 
     public List<IObserver> getObservers() {
@@ -72,4 +86,6 @@ public class Artist implements IArtist {
             iObserver.update(this);
         }
     }
+
+
 }

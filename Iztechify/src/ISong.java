@@ -1,4 +1,2 @@
-
-public interface ISong {
-
+public interface ISong extends ISubject {
 }

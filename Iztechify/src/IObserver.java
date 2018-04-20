@@ -1,5 +1,3 @@
-
 public interface IObserver {
-	public void update(ISubject subject);
-
+    void update(ISubject iSubject);
 }
