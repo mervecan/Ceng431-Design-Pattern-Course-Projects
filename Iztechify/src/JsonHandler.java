@@ -43,8 +43,4 @@ public class JsonHandler<T extends ISubject> {
         objectList.add(object);
         return true;
     }
-
-    public static void main(String[] args) throws IOException {
-
-    }
 }

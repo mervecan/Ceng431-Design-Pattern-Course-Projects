@@ -9,11 +9,13 @@ public class Artist implements IArtist {
 
     public Artist(){
         albums = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
     public Artist(String name, List<Album> albums) {
         this.name = name;
         this.albums = albums;
+        observers = new ArrayList<>();
     }
 
     @Override
@@ -31,8 +33,10 @@ public class Artist implements IArtist {
     @Override
     public void update(ISubject iSubject) {
         Album subject = (Album)iSubject;
-        for(Album album: albums){
-            if(album.getTitle().equals(subject.getTitle())){
+        Album album = new Album();
+        for(Album temp: albums){
+            if(temp.getTitle().equals(subject.getTitle())){
+
                 albums.remove(album);
                 albums.add(subject);
             }
@@ -54,6 +58,22 @@ public class Artist implements IArtist {
     public void setState(int state) {
         this.state = state;
         notifyAllObservers();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Album> getAlbums() {
+        return albums;
+    }
+
+    public void setAlbums(List<Album> albums) {
+        this.albums = albums;
     }
 
     @Override

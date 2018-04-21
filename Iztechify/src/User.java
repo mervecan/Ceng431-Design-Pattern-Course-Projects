@@ -22,6 +22,38 @@ public class User implements IUser {
         observers = new ArrayList<>();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists) {
+        this.playlists = playlists;
+    }
+
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
+
     @Override
     public void createPlaylist() {
         Playlist playlist = new Playlist();
@@ -50,7 +82,24 @@ public class User implements IUser {
 
     @Override
     public void update(ISubject iSubject) {
-
+        if(iSubject.getClass().equals(User.class)){
+            User subject = (User)iSubject;
+            for(User friend: friends){
+                if(friend.getName().equals(subject.getName())){
+                    friends.remove(friend);
+                    friends.add(subject);
+                }
+            }
+        }
+        else if(iSubject.getClass().equals(Playlist.class)){
+            Playlist subject = (Playlist)iSubject;
+            for(Playlist playlist: playlists){
+                if(playlist.getName().equals(subject.getName())){
+                    playlists.remove(playlist);
+                    playlists.add(subject);
+                }
+            }
+        }
     }
 
     public List<IObserver> getObservers() {

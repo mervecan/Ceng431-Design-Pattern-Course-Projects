@@ -2,11 +2,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Playlist implements IPlaylist {
+    private String name;
     private List<Song> songs;
     private int state;
     private List<IObserver> observers;
 
+
+
     public Playlist() {
+        state = 0;
+        observers = new ArrayList<>();
+    }
+
+    public Playlist(String name) {
+        this.name = name;
         state = 0;
         observers = new ArrayList<>();
     }
@@ -49,6 +58,22 @@ public class Playlist implements IPlaylist {
     public void setState(int state) {
         this.state = state;
         notifyAllObservers();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
     }
 
     @Override
