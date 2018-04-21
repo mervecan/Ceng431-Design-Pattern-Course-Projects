@@ -1,17 +1,39 @@
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class User implements IUser {
     private String name;
     private String password;
     private List<Playlist> playlists;
     private List<User> friends;
-    private int state;
-    private List<IObserver> observers;
+    @JsonIgnore
+    private int state;  //json ignore
+    @JsonIgnore
+    private List<IObserver> observers; //json ignore 
+    private JsonHandler<User> userJsonHandler;
+    private Set<String> fields;
     public User(){
         friends = new ArrayList<>();
         playlists = new ArrayList<>();
         observers = new ArrayList<>();
+        fields = new HashSet<String>();
+        fields.add("name");
+        fields.add("password");
+        fields.add("playlists");
+        fields.add("friends");
+        try {
+			userJsonHandler = new JsonHandler<>("user.json", User.class);
+			userJsonHandler.setFields(fields);
+			userJsonHandler.readJson();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public User(String name, String password) {
@@ -20,6 +42,19 @@ public class User implements IUser {
         friends = new ArrayList<>();
         playlists = new ArrayList<>();
         observers = new ArrayList<>();
+        fields = new HashSet<String>();
+        fields.add("name");
+        fields.add("password");
+        fields.add("playlists");
+        fields.add("friends");
+        try {
+			userJsonHandler = new JsonHandler<>("user.json", User.class);
+			userJsonHandler.setFields(fields);
+			userJsonHandler.readJson();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public String getName() {
@@ -135,6 +170,33 @@ public class User implements IUser {
             iObserver.update(this);
         }
     }
+
+	@Override
+	public boolean login(String userName, String password) {
+		for(User user : userJsonHandler.getObjectList() ) {
+				if(user.getName().equals(userName)&&user.getPassword().equals(password))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean register(String userName, String password) {
+		try {
+			userJsonHandler.addObject(new User(userName, password));
+			userJsonHandler.updateJson();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+    
+
+	
+    
 
 
 }

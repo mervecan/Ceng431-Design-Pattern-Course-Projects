@@ -1,11 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Album implements IAlbum {
     private String title;
     private String description;
     private List<Song> songs;
+    @JsonIgnore
     private List<IObserver> observers;
+    @JsonIgnore
     private int state;
 
     public Album(){

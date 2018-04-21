@@ -1,10 +1,14 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Song implements ISong {
     private String title;
     private String length;
+    @JsonIgnore
     private List<IObserver> observers;
+    @JsonIgnore
     private int state;
 
     public Song(){
