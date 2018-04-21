@@ -14,26 +14,13 @@ public class User implements IUser {
     @JsonIgnore
     private int state;  //json ignore
     @JsonIgnore
-    private List<IObserver> observers; //json ignore 
-    private JsonHandler<User> userJsonHandler;
-    private Set<String> fields;
+    private List<IObserver> observers; //json ignore
+
     public User(){
         friends = new ArrayList<>();
         playlists = new ArrayList<>();
         observers = new ArrayList<>();
-        fields = new HashSet<String>();
-        fields.add("name");
-        fields.add("password");
-        fields.add("playlists");
-        fields.add("friends");
-        try {
-			userJsonHandler = new JsonHandler<>("user.json", User.class);
-			userJsonHandler.setFields(fields);
-			userJsonHandler.readJson();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        observers.add(JsonHandler.getInstance());
     }
 
     public User(String name, String password) {
@@ -42,19 +29,7 @@ public class User implements IUser {
         friends = new ArrayList<>();
         playlists = new ArrayList<>();
         observers = new ArrayList<>();
-        fields = new HashSet<String>();
-        fields.add("name");
-        fields.add("password");
-        fields.add("playlists");
-        fields.add("friends");
-        try {
-			userJsonHandler = new JsonHandler<>("user.json", User.class);
-			userJsonHandler.setFields(fields);
-			userJsonHandler.readJson();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        observers.add(JsonHandler.getInstance());
     }
 
     public String getName() {
@@ -89,6 +64,23 @@ public class User implements IUser {
         this.friends = friends;
     }
 
+    public List<IObserver> getObservers() {
+        return observers;
+    }
+
+    public void setObservers(List<IObserver> observers) {
+        this.observers = observers;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+        notifyAllObservers();
+    }
+
     @Override
     public void createPlaylist() {
         Playlist playlist = new Playlist();
@@ -116,45 +108,6 @@ public class User implements IUser {
     }
 
     @Override
-    public void update(ISubject iSubject) {
-        if(iSubject.getClass().equals(User.class)){
-            User subject = (User)iSubject;
-            for(User friend: friends){
-                if(friend.getName().equals(subject.getName())){
-                    friends.remove(friend);
-                    friends.add(subject);
-                }
-            }
-        }
-        else if(iSubject.getClass().equals(Playlist.class)){
-            Playlist subject = (Playlist)iSubject;
-            for(Playlist playlist: playlists){
-                if(playlist.getName().equals(subject.getName())){
-                    playlists.remove(playlist);
-                    playlists.add(subject);
-                }
-            }
-        }
-    }
-
-    public List<IObserver> getObservers() {
-        return observers;
-    }
-
-    public void setObservers(List<IObserver> observers) {
-        this.observers = observers;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-        notifyAllObservers();
-    }
-
-    @Override
     public void attach(IObserver iObserver) {
         observers.add(iObserver);
     }
@@ -173,7 +126,7 @@ public class User implements IUser {
 
 	@Override
 	public boolean login(String userName, String password) {
-		for(User user : userJsonHandler.getObjectList() ) {
+		for(User user : JsonHandler.getInstance().getUserList()) {
 				if(user.getName().equals(userName)&&user.getPassword().equals(password))
 				return true;
 		}
@@ -182,16 +135,7 @@ public class User implements IUser {
 
 	@Override
 	public boolean register(String userName, String password) {
-		try {
-			userJsonHandler.addObject(new User(userName, password));
-			userJsonHandler.updateJson();
-			return true;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return false;
+        return JsonHandler.getInstance().addObject(new User(userName, password));
 	}
     
 

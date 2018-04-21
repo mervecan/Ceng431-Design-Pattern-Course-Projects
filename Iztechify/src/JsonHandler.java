@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -7,53 +8,100 @@ import java.util.List;
 import java.util.Set;
 
 //TODO add edit function
-public class JsonHandler<T extends ISubject> {
-    private File file;
+public class JsonHandler implements IJsonHandler {
+    private File userFile;
+    private File musicFile;
     private ObjectMapper mapper;
-    private List<T> objectList;
-    private Class<T> tClass;
-    private Set<String> fields;
+    private List<User> users;
+    private List<Artist> artists;
 
-    public JsonHandler(String filePath, Class<T> tClass) throws IOException {
-        this.file = new File(filePath);
-        this.objectList = new ArrayList<>();
+    private static final JsonHandler instance = new JsonHandler("user.json", "music.json");
+
+    public static JsonHandler getInstance(){
+        return instance;
+    }
+
+    private JsonHandler(String userFilePath, String musicFilePath) {
+        this.userFile = new File(userFilePath);
+        this.musicFile = new File(musicFilePath);
+        this.users = new ArrayList<>();
+        this.artists = new ArrayList<>();
         this.mapper = new ObjectMapper();
-        this.tClass = tClass;
-        fields = new HashSet<String>();
     }
 
-    public void readJson() throws IOException {
-        this.objectList = this.mapper.readValue(this.file, this.mapper.getTypeFactory().constructCollectionType(ArrayList.class, this.tClass));
+    @Override
+    public void readJson() {
+        try {
+            this.artists = this.mapper.readValue(this.musicFile, new TypeReference<List<Artist>>(){});
+            this.users = this.mapper.readValue(this.userFile, new TypeReference<List<User>>(){});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void updateJson() throws IOException{
-        this.mapper.writeValue(file, objectList);
+    @Override
+    public void updateJson(){
+        try {
+            this.mapper.writeValue(userFile, users);
+            this.mapper.writeValue(musicFile, artists);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public List<T> getObjectList() {
-        return objectList;
-    }
-   
-    public Set<String> getFields() {
-		return fields;
-	}
+    @Override
+	public boolean removeObject(ISubject subject){
+        if(subject.getClass().equals(User.class)) {
+            if (users.contains((User)subject)) {
+                users.remove((User)subject);
+                updateJson();
 
-	public void setFields(Set<String> fields) {
-		this.fields = fields;
-	}
+                return true;
+            }
+        }
+        else if (artists.contains((Artist)subject)) {
+            artists.remove((Artist)subject);
+            return true;
+        }
 
-	public boolean removeObject(T object) throws IOException{
-    	if(objectList.contains(object)) {
-    		objectList.remove(object);
-    		return true;
-    	}
-    	return false;
+        return false;
     }
 
-    
-    public boolean addObject(T object) throws IOException{
+    @Override
+    public void update(ISubject iSubject) {
+        updateJson();
+    }
+
+    @Override
+    public boolean addObject(ISubject subject){
         //TODO: Modify so that if object exists it modifies it.
-        objectList.add(object);
-        return true;
+        if(subject.getClass().equals(User.class)) {
+            if (users.contains((User)subject)) {
+                return false;
+            }
+            else{
+                users.add((User)subject);
+                updateJson();
+                return true;
+            }
+        }
+        else if (subject.getClass().equals(Artist.class)){
+            if(artists.contains((Artist)subject)){
+                return false;
+            }
+            else{
+                artists.add((Artist)subject);
+                updateJson();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<User> getUserList() {
+        return users;
+    }
+    public List<Artist> getArtistList() {
+        return artists;
     }
 }
