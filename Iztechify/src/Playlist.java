@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Playlist implements IPlaylist {
     private String name;
@@ -18,7 +20,8 @@ public class Playlist implements IPlaylist {
         observers = new ArrayList<>();
     }
 
-    public Playlist(String name) {
+    @JsonCreator
+    public Playlist(@JsonProperty(value = "name", required = true) String name) {
         this.name = name;
         state = 0;
         observers = new ArrayList<>();
@@ -26,13 +29,22 @@ public class Playlist implements IPlaylist {
 
     @Override
     public void addSong(Song song) {
+        song.attach(this);
         songs.add(song);
+        setState(state+1);
     }
 
     @Override
     public void removeSong(Song song) {
+        for(Song s: songs){
+            if(s.getTitle().equals(song.getTitle())){
+                s.detach(this);
+                break;
+            }
+        }
         if(songs.contains(song)){
             songs.remove(song);
+            setState(state+1);
         }
     }
 
@@ -70,6 +82,7 @@ public class Playlist implements IPlaylist {
 
     public void setName(String name) {
         this.name = name;
+        setState(state+1);
     }
 
     public List<Song> getSongs() {
@@ -78,6 +91,8 @@ public class Playlist implements IPlaylist {
 
     public void setSongs(List<Song> songs) {
         this.songs = songs;
+        setState(state+1);
+
     }
 
     @Override

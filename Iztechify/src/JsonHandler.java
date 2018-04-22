@@ -53,6 +53,7 @@ public class JsonHandler implements IJsonHandler {
 	public boolean removeObject(ISubject subject){
         if(subject.getClass().equals(User.class)) {
             if (users.contains((User)subject)) {
+                subject.detach(this);
                 users.remove((User)subject);
                 updateJson();
 
@@ -60,6 +61,7 @@ public class JsonHandler implements IJsonHandler {
             }
         }
         else if (artists.contains((Artist)subject)) {
+            subject.detach(this);
             artists.remove((Artist)subject);
             return true;
         }
@@ -74,6 +76,7 @@ public class JsonHandler implements IJsonHandler {
 
     @Override
     public boolean addObject(ISubject subject){
+        subject.attach(this);
         //TODO: Modify so that if object exists it modifies it.
         if(subject.getClass().equals(User.class)) {
             if (users.contains((User)subject)) {

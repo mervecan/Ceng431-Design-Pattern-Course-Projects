@@ -1,7 +1,10 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Album implements IAlbum {
     private String title;
@@ -17,10 +20,12 @@ public class Album implements IAlbum {
         observers = new ArrayList<>();
     }
 
-    public Album(String title, String description, List<Song> songs) {
+    @JsonCreator
+    public Album(@JsonProperty(value = "title", required = true) String title, @JsonProperty(value = "description", required = true) String description, @JsonProperty(value = "songs", required = true) List<Song> songs) {
         this.title = title;
         this.description = description;
         this.songs = songs;
+        attachToSongs();
         state = 0;
         observers = new ArrayList<>();
     }
@@ -31,6 +36,7 @@ public class Album implements IAlbum {
 
     public void setTitle(String title) {
         this.title = title;
+        setState(state+1);
     }
 
     public String getDescription() {
@@ -47,6 +53,14 @@ public class Album implements IAlbum {
 
     public void setSongs(List<Song> songs) {
         this.songs = songs;
+        setState(state+1);
+    }
+
+    @Override
+    public void attachToSongs() {
+        for(Song song: songs){
+            song.attach(this);
+        }
     }
 
     public List<IObserver> getObservers() {
@@ -68,24 +82,36 @@ public class Album implements IAlbum {
 
     @Override
     public void addSong(Song song) {
+        song.attach(this);
         songs.add(song);
+        setState(state+1);
     }
 
     @Override
     public void removeSong(Song song) {
-        if(songs.contains(song))
+        if(songs.contains(song)) {
+            for(Song s: songs){
+                if(s.getTitle().equals(song.getTitle())){
+                    s.detach(this);
+                    break;
+                }
+            }
             songs.remove(song);
+            setState(state + 1);
+        }
     }
 
     @Override
     public void update(ISubject iSubject) {
         Song subject = (Song)iSubject;
-        for(Song song: songs){
-            if(song.getTitle().equals(subject.getTitle())){
-                songs.remove(song);
-                songs.add(subject);
+        for(Iterator<Song> iterator = songs.iterator(); iterator.hasNext();){
+            Song temp = iterator.next();
+            if(temp.getTitle().equals(subject.getTitle())){
+                iterator.remove();
+                break;
             }
         }
+        songs.add(subject);
     }
 
     @Override

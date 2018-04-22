@@ -4,13 +4,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User implements IUser {
     private String name;
     private String password;
     private List<Playlist> playlists;
-    private List<User> friends;
+    private List<IUser> friends;
     @JsonIgnore
     private int state;  //json ignore
     @JsonIgnore
@@ -23,7 +25,8 @@ public class User implements IUser {
         observers.add(JsonHandler.getInstance());
     }
 
-    public User(String name, String password) {
+    @JsonCreator
+    public User(@JsonProperty(value = "name", required = true) String name, @JsonProperty(value = "password", required = true) String password) {
         this.name = name;
         this.password = password;
         friends = new ArrayList<>();
@@ -38,6 +41,7 @@ public class User implements IUser {
 
     public void setName(String name) {
         this.name = name;
+        setState(state+1);
     }
 
     public String getPassword() {
@@ -46,6 +50,7 @@ public class User implements IUser {
 
     public void setPassword(String password) {
         this.password = password;
+        setState(state+1);
     }
 
     public List<Playlist> getPlaylists() {
@@ -54,14 +59,16 @@ public class User implements IUser {
 
     public void setPlaylists(List<Playlist> playlists) {
         this.playlists = playlists;
+        setState(state+1);
     }
 
-    public List<User> getFriends() {
+    public List<IUser> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(List<IUser> friends) {
         this.friends = friends;
+        setState(state+1);
     }
 
     public List<IObserver> getObservers() {
@@ -90,21 +97,35 @@ public class User implements IUser {
     @Override
     public void addSongToPlaylist(Playlist playlist, Song song) {
         playlist.addSong(song);
+        setState(state+1);
     }
 
     @Override
     public void removeSongFromPlaylist(Playlist playlist, Song song) {
-
+        playlist.removeSong(song);
+        setState(state+1);
     }
 
     @Override
     public void addFriend(IUser friend) {
-
+        friend.attach(this);
+        friends.add(friend);
+        setState(state+1);
     }
 
     @Override
     public void removeFriend(IUser friend) {
-
+        User f = (User)friend;
+        if(friends.contains(friend)){
+            for(IUser u: friends){
+                if(((User)u).getName().equals(f.getName())){
+                    friend.detach(this);
+                    break;
+                }
+            }
+            friends.remove(friend);
+            setState(state+1);
+        }
     }
 
     @Override
@@ -137,10 +158,10 @@ public class User implements IUser {
 	public boolean register(String userName, String password) {
         return JsonHandler.getInstance().addObject(new User(userName, password));
 	}
-    
-
-	
-    
 
 
+    @Override
+    public void update(ISubject iSubject) {
+        JsonHandler.getInstance().updateJson();
+    }
 }

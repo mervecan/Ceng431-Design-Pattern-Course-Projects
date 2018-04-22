@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Song implements ISong {
     private String title;
@@ -16,7 +18,8 @@ public class Song implements ISong {
         state = 0;
     }
 
-    public Song(String title, String length) {
+    @JsonCreator
+    public Song(@JsonProperty(value = "title", required = true) String title, @JsonProperty(value = "length", required = true) String length) {
         this.title = title;
         this.length = length;
         observers = new ArrayList<>();
@@ -29,6 +32,7 @@ public class Song implements ISong {
 
     public void setTitle(String title) {
         this.title = title;
+        setState(state+1);
     }
 
     public String getLength() {
@@ -37,6 +41,7 @@ public class Song implements ISong {
 
     public void setLength(String length) {
         this.length = length;
+        setState(state+1);
     }
 
     public List<IObserver> getObservers() {

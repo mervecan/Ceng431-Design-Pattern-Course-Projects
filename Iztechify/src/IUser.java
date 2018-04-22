@@ -1,4 +1,4 @@
-public interface IUser extends ISubject {
+public interface IUser extends ISubject, IObserver {
     void createPlaylist();
     void addSongToPlaylist(Playlist playlist, Song song);
     void removeSongFromPlaylist(Playlist playlist, Song song);
